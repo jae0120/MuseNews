@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MuseNews</string>
+    <string name="publication_date">Publication Date:</string>
+    <string name="section">Section:</string>
+    <string name="empty_text">There are no articles to display.</string>
+    <string name="no_network">No Internet Connection</string>
+</resources>
