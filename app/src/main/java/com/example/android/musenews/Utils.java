@@ -139,9 +139,12 @@ public class Utils {
                 String webTitle = c.getString("webTitle");
                 String pubDate = c.getString("webPublicationDate");
                 String webUrl = c.getString("webUrl");
+                JSONArray tags = c.getJSONArray("tags");
+                JSONObject d = tags.getJSONObject(0);
+                String author = d.getString("webTitle");
 
                 // Create a new {@link Event} object
-                articles.add(new Article (sectionName, webTitle, webUrl, pubDate));
+                articles.add(new Article (sectionName, webTitle, webUrl, pubDate, author));
             }
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Problem parsing the earthquake JSON results", e);

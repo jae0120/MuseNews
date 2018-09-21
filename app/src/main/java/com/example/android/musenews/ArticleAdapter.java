@@ -50,6 +50,13 @@ public class ArticleAdapter extends ArrayAdapter<Article> {
         // set the text from the array on  the list item
         sectionNameView.setText(sectionName);
 
+        // get author view
+        TextView authorTextView = convertView.findViewById(R.id.article_author);
+        // get author name
+        String author = currentArticle.getAuthor();
+        // set the text from the array on the list item
+        authorTextView.setText(author);
+
         return convertView;
     }
 }

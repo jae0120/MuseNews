@@ -19,17 +19,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Article>> {
-    private final static String GUARDIAN_QUERY ="https://content.guardianapis.com/search?page=1&q=music&api-key=";
+    private final static String GUARDIAN_QUERY ="https://content.guardianapis.com/search?show-tags=contributor&q=music&api-key=b0760b75-ec60-4d16-af27-12c7b7015a3f";
     private static final int ARTICLE_LOADER_ID = 1;
     TextView emptyElement;
     ProgressBar progress;
+    ListView articleListView;
 
     private ArticleAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ListView articleListView = findViewById(R.id.list_view);
+        articleListView = findViewById(R.id.list_view);
         emptyElement = (TextView) findViewById(R.id.empty_view);
         progress = (ProgressBar) findViewById(R.id.progress);
 
@@ -55,6 +56,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 
         articleListView.setEmptyView(emptyElement);
+
+
+    }   @Override
+    public ArticleLoader onCreateLoader(int i, Bundle bundle) {
+        return new ArticleLoader(this, GUARDIAN_QUERY);
+
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Article>> loader, final List<Article> articles) {
+        if (articles == null) {
+            return;
+        }
+        updateUi(articles);
+        emptyElement.setText(R.string.empty_text);
+        progress.setVisibility(View.GONE);
         articleListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -68,21 +85,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 startActivity(i);
             }
         });
-
-    }   @Override
-    public ArticleLoader onCreateLoader(int i, Bundle bundle) {
-        return new ArticleLoader(this, GUARDIAN_QUERY);
-
-    }
-
-    @Override
-    public void onLoadFinished(Loader<List<Article>> loader, List<Article> articles) {
-        if (articles == null) {
-            return;
-        }
-        updateUi(articles);
-        emptyElement.setText(R.string.empty_text);
-        progress.setVisibility(View.GONE);
     }
 
     @Override
