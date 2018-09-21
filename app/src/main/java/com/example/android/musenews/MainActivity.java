@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Article>> {
-    private final static String GUARDIAN_QUERY ="https://content.guardianapis.com/search?show-tags=contributor&q=music&api-key=b0760b75-ec60-4d16-af27-12c7b7015a3f";
+    private final static String GUARDIAN_QUERY ="https://content.guardianapis.com/search?show-tags=contributor&q=music&api-key=";
     private static final int ARTICLE_LOADER_ID = 1;
     TextView emptyElement;
     ProgressBar progress;
