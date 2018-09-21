@@ -21,9 +21,9 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Article>> {
     private final static String GUARDIAN_QUERY ="https://content.guardianapis.com/search?show-tags=contributor&q=music&api-key=";
     private static final int ARTICLE_LOADER_ID = 1;
-    TextView emptyElement;
-    ProgressBar progress;
-    ListView articleListView;
+    private TextView emptyElement;
+    private ProgressBar progress;
+    private ListView articleListView;
 
     private ArticleAdapter adapter;
     @Override
@@ -39,10 +39,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
-        final List<Article> articles = new ArrayList<Article>();
-
         if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
-
 
             getLoaderManager().initLoader(ARTICLE_LOADER_ID, null, this);
         }
@@ -67,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoadFinished(Loader<List<Article>> loader, final List<Article> articles) {
         if (articles == null) {
+            emptyElement.setText(R.string.no_results);
+            progress.setVisibility(View.GONE);
             return;
         }
         updateUi(articles);

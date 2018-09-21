@@ -4,7 +4,6 @@ import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ArticleLoader extends AsyncTaskLoader<List<Article>> {
@@ -28,7 +27,6 @@ public class ArticleLoader extends AsyncTaskLoader<List<Article>> {
             return null;
         }
         Log.v(LOG_TAG, "Loading in background...");
-        List<Article> articles = new ArrayList<Article>(Utils.fetchArticleData(mUrl));
-        return articles;
+        return Utils.fetchArticleData(mUrl);
     }
 }

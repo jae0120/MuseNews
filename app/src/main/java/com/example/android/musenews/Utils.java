@@ -20,7 +20,10 @@ import java.util.List;
 
 public class Utils {
     /** Tag for the log messages */
-    public static final String LOG_TAG = Utils.class.getSimpleName();
+    private static final String LOG_TAG = Utils.class.getSimpleName();
+    private static final int READ_TIMEOUT_LIMIT = 10000;
+    private static final int CONNECT_TIMEOUT_LIMIT = 15000;
+    private static final int SUCCESS_CODE = 200;
 
     /**
      * Query the Guardian API and return an {@link Article} object to represent a single earthquake.
@@ -72,14 +75,14 @@ public class Utils {
         InputStream inputStream = null;
         try {
             urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setReadTimeout(10000 /* milliseconds */);
-            urlConnection.setConnectTimeout(15000 /* milliseconds */);
+            urlConnection.setReadTimeout(READ_TIMEOUT_LIMIT /* milliseconds */);
+            urlConnection.setConnectTimeout(CONNECT_TIMEOUT_LIMIT /* milliseconds */);
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
 
             // If the request was successful (response code 200),
             // then read the input stream and parse the response.
-            if (urlConnection.getResponseCode() == 200) {
+            if (urlConnection.getResponseCode() == SUCCESS_CODE) {
                 inputStream = urlConnection.getInputStream();
                 jsonResponse = readFromStream(inputStream);
             } else {
@@ -129,19 +132,22 @@ public class Utils {
 
         try {
             JSONObject baseJsonResponse = new JSONObject(jsonResponse);
-            JSONObject responseObject = baseJsonResponse.getJSONObject("response");
-            JSONArray resultsArray = responseObject.getJSONArray("results");
+            JSONObject responseObject = baseJsonResponse.optJSONObject("response");
+            JSONArray resultsArray = responseObject.optJSONArray("results");
 
             // If there are results in the features array
             for (int i = 0; i < resultsArray.length(); i++){
-                JSONObject c = resultsArray.getJSONObject(i);
-                String sectionName = c.getString("sectionName");
-                String webTitle = c.getString("webTitle");
-                String pubDate = c.getString("webPublicationDate");
-                String webUrl = c.getString("webUrl");
-                JSONArray tags = c.getJSONArray("tags");
-                JSONObject d = tags.getJSONObject(0);
-                String author = d.getString("webTitle");
+                JSONObject c = resultsArray.optJSONObject(i);
+                String sectionName = c.optString("sectionName");
+                String webTitle = c.optString("webTitle");
+                String pubDate = c.optString("webPublicationDate");
+                String webUrl = c.optString("webUrl");
+                String author = "";
+                JSONArray tags = c.optJSONArray("tags");
+                if (tags.length() != 0) {
+                    JSONObject d = tags.optJSONObject(0);
+                    author = d.optString("webTitle");
+                }
 
                 // Create a new {@link Event} object
                 articles.add(new Article (sectionName, webTitle, webUrl, pubDate, author));
