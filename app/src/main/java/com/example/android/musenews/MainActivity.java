@@ -24,8 +24,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private TextView emptyElement;
     private ProgressBar progress;
     private ListView articleListView;
-
     private ArticleAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,43 +34,53 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         emptyElement = (TextView) findViewById(R.id.empty_view);
         progress = (ProgressBar) findViewById(R.id.progress);
 
+        // set up a connectivity manager so that I can check if the user has internet
         ConnectivityManager cm =
                 (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
+        // if user has internet, proceed to initialize the loader.
         if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
 
             getLoaderManager().initLoader(ARTICLE_LOADER_ID, null, this);
         }
+        // if no internet, tell the user
         else {
             emptyElement.setText(R.string.no_network);
             progress.setVisibility(View.GONE);
         }
-        // Create a new {@link ArrayAdapter} of earthquakes
+        // Create a new {@link ArrayAdapter} of articles & set it
         adapter = new ArticleAdapter(this, new ArrayList<Article>());
         articleListView.setAdapter(adapter);
-
-
+        // set Empty View method so that the empty view will take over the listview when there are no
+        // list view items to display
         articleListView.setEmptyView(emptyElement);
 
 
-    }   @Override
+    }
+    // creates a loader if one does not exist. necessary for using the loader
+    @Override
     public ArticleLoader onCreateLoader(int i, Bundle bundle) {
         return new ArticleLoader(this, GUARDIAN_QUERY);
 
     }
 
+    // tells app what to do when the background work is completed.
     @Override
     public void onLoadFinished(Loader<List<Article>> loader, final List<Article> articles) {
+        // If we didn't get any articles back, tell the user
         if (articles == null) {
             emptyElement.setText(R.string.no_results);
             progress.setVisibility(View.GONE);
             return;
         }
+        // update the screen with the articles we pulled from the JSON
         updateUi(articles);
         emptyElement.setText(R.string.empty_text);
         progress.setVisibility(View.GONE);
+
+        // create an instance of onItemClickListener to listen for user clicks
         articleListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -86,11 +96,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         });
     }
 
+    // necessary method for Loaders. reset the adapter
     @Override
     public void onLoaderReset(Loader<List<Article>> loader) {
         adapter.clear();
     }
 
+    // make sure the adapter doesn't have old data in it, then update articles if applicable
     private void updateUi(List articles){
         adapter.clear();
         if (articles != null && !articles.isEmpty()) {
