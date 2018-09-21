@@ -19,7 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Article>> {
-    private final static String GUARDIAN_QUERY ="https://content.guardianapis.com/search?show-tags=contributor&q=music&api-key=";
+    private final static String apiKey = BuildConfig.ApiKey;
+    private final static String GUARDIAN_QUERY ="https://content.guardianapis.com/search?show-tags=contributor&q=music&api-key=" + apiKey;
     private static final int ARTICLE_LOADER_ID = 1;
     private TextView emptyElement;
     private ProgressBar progress;
