@@ -4,11 +4,16 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -18,9 +23,11 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.android.musenews.ArticleLoader.LOG_TAG;
+
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Article>> {
     private final static String apiKey = BuildConfig.ApiKey;
-    private final static String GUARDIAN_QUERY ="https://content.guardianapis.com/search?show-tags=contributor&q=music&api-key=" + apiKey;
+    private final static String GUARDIAN_QUERY ="https://content.guardianapis.com/search?";
     private static final int ARTICLE_LOADER_ID = 1;
     private TextView emptyElement;
     private ProgressBar progress;
@@ -63,7 +70,29 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     // creates a loader if one does not exist. necessary for using the loader
     @Override
     public ArticleLoader onCreateLoader(int i, Bundle bundle) {
-        return new ArticleLoader(this, GUARDIAN_QUERY);
+
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String orderBy  = sharedPrefs.getString(
+                getString(R.string.settings_order_by_key),
+                getString(R.string.settings_order_by_default)
+        );
+
+        String numArticles = sharedPrefs.getString(getString(R.string.settings_num_articles_key), getString(R.string.settings_num_articles_label));
+        // parse breaks apart the URI string that's passed into its parameter
+        Uri baseUri = Uri.parse(GUARDIAN_QUERY);
+
+        // buildUpon prepares the baseUri that we just parsed so we can add query parameters to it
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+
+        // Append query parameter and its value. For example, the `q=music``
+        uriBuilder.appendQueryParameter("order-by", orderBy);
+        uriBuilder.appendQueryParameter("show-tags", "contributor");
+        uriBuilder.appendQueryParameter("page-size", numArticles);
+        uriBuilder.appendQueryParameter("q", "music");
+        uriBuilder.appendQueryParameter("api-key", apiKey);
+        Log.i(LOG_TAG, uriBuilder.toString());
+        return new ArticleLoader(this, uriBuilder.toString());
 
     }
 
@@ -109,5 +138,23 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (articles != null && !articles.isEmpty()) {
             adapter.addAll(articles);
         }
+    }
+    @Override
+    // This method initialize the contents of the Activity's options menu
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    // This method is called whenever an item in the options menu is selected.
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingsIntent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

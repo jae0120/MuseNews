@@ -23,7 +23,6 @@ public class Utils {
     private static final String LOG_TAG = Utils.class.getSimpleName();
     private static final int READ_TIMEOUT_LIMIT = 10000;
     private static final int CONNECT_TIMEOUT_LIMIT = 15000;
-    private static final int SUCCESS_CODE = 200;
 
     /**
      * Query the Guardian API and return an {@link Article} object to represent a single earthquake.
@@ -82,7 +81,7 @@ public class Utils {
 
             // If the request was successful (response code 200),
             // then read the input stream and parse the response.
-            if (urlConnection.getResponseCode() == SUCCESS_CODE) {
+            if (urlConnection.getResponseCode() == urlConnection.HTTP_OK) {
                 inputStream = urlConnection.getInputStream();
                 jsonResponse = readFromStream(inputStream);
             } else {
