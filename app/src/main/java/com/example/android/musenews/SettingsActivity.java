@@ -39,9 +39,9 @@ public class SettingsActivity extends AppCompatActivity {
                 if (prefIndex >= 0) {
                     CharSequence[] labels = listPreference.getEntries();
                     preference.setSummary(labels[prefIndex]);
-                } else {
-                    preference.setSummary(stringValue);
                 }
+            } else {
+                preference.setSummary(stringValue);
             }
             return true;
         }

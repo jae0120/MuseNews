@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:paddingBottom="16dp"
     android:paddingLeft="16dp"
@@ -10,15 +11,17 @@
 
     <TextView
         android:id="@+id/article_title"
-        android:textSize="20sp"
+        android:textSize="@dimen/title_text_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:text="Title"/>
 
     <TextView
         android:id="@+id/article_author"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        tools:text="Author: Jasmine Eyre"
          />
 
     <LinearLayout
@@ -35,7 +38,8 @@
             android:id="@+id/publication_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="8dp"/>
+            android:paddingLeft="8dp"
+            tools:text="01/01/2000"/>
     </LinearLayout>
 
     <LinearLayout
@@ -52,7 +56,8 @@
             android:id="@+id/section_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="8dp"/>
+            android:paddingLeft="8dp"
+            tools:text="Music" />
     </LinearLayout>
 
 </LinearLayout>
